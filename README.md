@@ -6,7 +6,14 @@
 
 <!-- dash-content-start -->
 
-Generate images based on text prompts using [Workers AI](https://developers.cloudflare.com/workers-ai/). In this example, going to the website will generate an image from the prompt "cyberpunk cat" using the `@cf/stabilityai/stable-diffusion-xl-base-1.0` model. Be patient! Your image may take a few seconds to generate.
+Generate and edit images based on text prompts and multi-reference images using [Workers AI](https://developers.cloudflare.com/workers-ai/) and [FLUX.2 [klein] 4B](https://developers.cloudflare.com/workers-ai/models/flux-2-klein-4b/) (`@cf/black-forest-labs/flux-2-klein-4b`).
+
+Features:
+- **Ultra-fast 4-step distilled inference** with Black Forest Labs' FLUX.2 Klein model.
+- **Interactive Web Studio UI**: Text-to-Image generation and Image Edit / Reference mode with drag-and-drop upload.
+- **Multi-reference Image Support**: Upload up to 4 reference images (`input_image_0` through `input_image_3`) to guide or edit compositions.
+- **Iterative Editing**: "Use as Reference" button to feed generated images directly back into the reference slot.
+- **Developer API**: Programmatic HTTP endpoints supporting both `multipart/form-data` and `application/json`.
 
 <!-- dash-content-end -->
 
@@ -34,3 +41,24 @@ A live public deployment of this template is available at [https://text-to-image
    ```bash
    npx wrangler tail
    ```
+
+## API Usage
+
+### Text-to-Image Generation
+```bash
+curl -X POST https://YOUR_WORKER_URL/api/generate \
+  -F "prompt=cyberpunk cat in neon Tokyo" \
+  -F "width=1024" \
+  -F "height=1024" \
+  --output result.jpg
+```
+
+### Image Reference Upload & Editing
+```bash
+curl -X POST https://YOUR_WORKER_URL/api/generate \
+  -F "prompt=Transform input_image_0 into an oil painting on canvas" \
+  -F "input_image_0=@portrait.jpg" \
+  -F "width=1024" \
+  -F "height=1024" \
+  --output edited.jpg
+```
